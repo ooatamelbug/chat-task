@@ -6,6 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
@@ -13,35 +14,35 @@ import { Socket, Server } from 'socket.io';
   },
 })
 export class ChatGateway {
+  constructor(private readonly chatService: ChatService) {}
+
   @WebSocketServer()
   server: Server;
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     console.log('Client connected:', client.id);
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     console.log('Client disconnected:', client.id);
   }
 
   // this event make join to room
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(
+  async handleJoinRoom(
     @MessageBody() data: { roomId: string; userId: string },
     @ConnectedSocket() client: Socket,
   ) {
     client.join(data.roomId);
 
-    console.log(`${data.userId} joined room ${data.roomId}`);
+    const messages = await this.chatService.getLastMessages(data.roomId);
 
-    this.server.to(data.roomId).emit('userJoined', {
-      userId: data.userId,
-    });
+    client.emit('previousMessages', messages);
   }
 
   // this event make send message to room
   @SubscribeMessage('sendMessage')
-  handleMessage(
+  async handleMessage(
     @MessageBody()
     data: {
       roomId: string;
@@ -50,12 +51,10 @@ export class ChatGateway {
     },
     @ConnectedSocket() client: Socket,
   ) {
-    const message = {
+    const message = await this.chatService.createMessage({
       ...data,
-      createdAt: new Date(),
-    };
+    });
 
-    // broadcast to room
     this.server.to(data.roomId).emit('receiveMessage', message);
   }
 }
