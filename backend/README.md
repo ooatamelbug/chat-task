@@ -1,73 +1,148 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🚀 Scalable Real-Time Chat System (Backend)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This backend is a scalable real-time chat system built using **NestJS**, **Socket.IO**, and **MongoDB**.
+It supports multi-room chat, private messaging, real-time events, and production-ready architecture patterns.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
 
-## Installation
+### Real-Time Messaging
+
+* Built with Socket.IO for low-latency communication
+* Supports both:
+
+  * Room-based messages
+  * Private messages (DM)
+
+---
+
+### Multi-Room System
+
+* Users can dynamically join chat rooms
+* Each room maintains:
+
+  * Connected users
+  * Message history
+
+---
+
+### Message Persistence
+
+* Messages are stored in MongoDB using Mongoose
+* Schema includes:
+
+  * roomId
+  * senderId
+  * receiverId (optional)
+  * content
+  * timestamp
+
+---
+
+### Message History
+
+* Last 20 messages are loaded when joining a room
+* Designed to support pagination (future improvement)
+
+---
+
+### Online Users Tracking
+
+* Tracks active users per room
+* Real-time updates when users:
+
+  * Join
+  * Leave
+  * Disconnect
+
+---
+
+### Typing Indicator
+
+* WhatsApp-style typing system:
+
+  * typing_start
+  * typing_stop
+* Uses debounce to prevent excessive events
+
+---
+
+### Authentication (Basic)
+
+* Uses socket handshake auth
+* Each user identified via token (mocked)
+* Designed to be replaced with JWT in production
+
+---
+
+### Rate Limiting
+
+* Prevents spam:
+
+  * e.g. 5 messages / 10 seconds per user per room
+* Implemented via custom RateLimitService
+
+---
+
+### WebSocket Events
+
+#### Client → Server
+
+* join_room
+* send_message
+* typing_start
+* typing_stop
+
+#### Server → Client
+
+* receive_message
+* room_messages
+* online_users
+* typing_start / typing_stop
+
+---
+
+## Architecture
+
+* Modular NestJS structure
+* Separation of concerns:
+
+  * Gateway (real-time layer)
+  * Service (business logic)
+  * Database layer (Mongoose)
+
+---
+
+
+## Tech Stack
+
+* NestJS
+* Socket.IO
+* MongoDB (Mongoose)
+* TypeScript
+
+---
+
+## Running the Project
 
 ```bash
-$ npm install
+npm install
+npm run start:dev
 ```
 
-## Running the app
+---
 
-```bash
-# development
-$ npm run start
+## Notes
 
-# watch mode
-$ npm run start:dev
+This project focuses on:
 
-# production mode
-$ npm run start:prod
-```
+* Real-time communication
+* Clean architecture
+---
 
-## Test
+## Author
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+Developed as a backend assessment project demonstrating real-world system design and implementation.

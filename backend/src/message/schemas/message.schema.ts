@@ -12,6 +12,9 @@ export class Message {
   senderId: string;
 
   @Prop()
+  senderName: string;
+
+  @Prop()
   receiverId?: string; // DM
 
   @Prop()
